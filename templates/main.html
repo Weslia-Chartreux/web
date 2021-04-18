@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center">Товары</h2>
+{% if current_user.is_authenticated and current_user.moder %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="/item_add" class="btn btn-outline-secondary">Добавить товар</a>
+        <a href="/admin_orders" class="btn btn-outline-secondary">Подтверждение заказов</a>
+        <a type="button" class="btn btn-info" href="/orders">Мои заказы</a>
+        </div>
+{% elif current_user.is_authenticated %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a type="button" class="btn btn-info" href="/orders">Мои заказы</a>
+        </div>
+{% endif %}
+{% if item_list %}
+        {% for item in item_list %}
+        <table class="table table-striped">
+                <thead class="thead-inverse">
+                        <tr><th>Id</th><th>Название</th><th>Описание</th><th>Цена</th><th>Количество</th><th>Картинка</th><th> </th></tr>
+                </thead>
+        <tr><td>{{ item.id }}</td><td>{{ item.name }}</td><td>{{ item.description }}</td><td>{{ item.price }}</td><td>{{ item.quantity }}</td><td><img src="/static/img/{{ item.img }}" width="100" height="100"></td>
+        {% if current_user.is_authenticated and current_user.moder %}
+                <td>
+                 <a href="/buy/{{ item.id }}" class="btn btn-success">Оформить заказ</a>
+                <a href="/edit/{{ item.id }}" class="btn btn-outline-warning">Редактировать</a>
+                <a href="/delete/{{ item.id }}" class="btn btn-outline-danger">Удалить</a>
+                </td>
+        {% elif current_user.is_authenticated %}
+                <td><a href="/buy/{{ item.id }}" class="btn btn-success">Оформить заказ</a></td>
+        {% else %}
+                <td> </td>
+        {% endif %}
+        </tr>
+        </table>
+        {% endfor %}
+{% endif %}
+{% endblock %}

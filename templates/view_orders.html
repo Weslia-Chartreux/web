@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center">Мои заказы</h2>
+{% if item_list %}
+        <table class="table table-striped">
+                <thead class="thead-inverse">
+                        <tr><th>Id</th><th>Название</th><th>Описание</th><th>Цена</th><th>Стоимость</th><th>Статус</th></tr>
+                </thead>
+                {% for item in item_list %}
+        <tr><td>{{ item.id }}</td><td>{{ item.item.name }}</td><td>{{ item.item.description }}</td><td>{{ item.item.price }}</td><td>{{ item.item.price * item.quantity }}</td>
+            <td>{{ item.condition }}</td>
+        </tr>
+                {% endfor %}
+        </table>
+{% endif %}
+{% endblock %}

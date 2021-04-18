@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center">Заказы</h2>
+{% if item_list %}
+        <table class="table table-striped">
+                <thead class="thead-inverse">
+                        <tr><th>Id</th><th>Название</th><th>Покупатель</th><th>Место доставки</th><th>Стоимость</th><th>Статус</th><th> </th></tr>
+                </thead>
+                {% for item in item_list %}
+        <tr><td>{{ item.id }}</td><td>{{ item.item.name }}</td><td>{{ item.user.name }}</td><td>{{ item.user.address }}</td>
+            <td>{{ item.item.price * item.quantity }}</td>
+            <td>
+  <div class="dropdown">
+  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+    {{ item.condition }}
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+    <li><a class="dropdown-item" href="/edit_status/{{ item.id }}/1">Не оплачено</a></li>
+      <li><a class="dropdown-item" href="/edit_status/{{ item.id }}/2">Оформление заказа</a></li>
+      <li><a class="dropdown-item" href="/edit_status/{{ item.id }}/3">Доставка</a></li>
+      <li><a class="dropdown-item" href="/edit_status/{{ item.id }}/4">Доставлено</a></li>
+  </ul>
+</div></td><td><a href="/delete_order/{{ item.id }}" class="btn btn-outline-danger">Удалить</a></td>
+        </tr>
+                {% endfor %}
+        </table>
+{% endif %}
+{% endblock %}

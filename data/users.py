@@ -48,3 +48,12 @@ class RegisterForm(FlaskForm, SerializerMixin):
     email = EmailField('Почта', validators=[DataRequired()])
     password = PasswordField('Пароль', validators=[DataRequired()])
     submit = SubmitField('Применить')
+
+
+class ProfForm(FlaskForm, SerializerMixin):
+    surname = StringField('Фамилия')
+    name = StringField('Имя')
+    age = IntegerField("Возвраст")
+    address = StringField("Место доставки")
+    email = EmailField('Почта', validators=[DataRequired()])
+    submit = SubmitField('Применить')

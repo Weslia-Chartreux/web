@@ -5,10 +5,12 @@ from werkzeug.exceptions import abort
 from data import db_session, items_resource
 from werkzeug.security import generate_password_hash
 from data.orders import Orders, OrderForm
-from data.users import User, LoginForm, RegisterForm
+from data.users import User, LoginForm, RegisterForm, ProfForm
 from data.items import Item, ItemsForm
 import os
 from waitress import serve
+
+from static.sent_email import send_email_order
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Weslia'
@@ -128,6 +130,24 @@ def edit_jobs(id):
                            form=form, lol=a)
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if current_user.moder:
+        return redirect('/')
+    form = ProfForm()
+    user = db_sess.query(User).get(current_user.id)
+    if form.validate_on_submit():
+        user.email = form.email.data
+        user.surname = form.surname.data
+        user.name = form.name.data
+        user.age = form.age.data
+        user.address = form.address.data
+        db_sess.commit()
+        return render_template('profile.html', title='Профиль', form=form, u=user)
+    return render_template('profile.html', title='Профиль', form=form, u=user)
+
+
 @app.route('/buy/<int:id>', methods=['GET', 'POST'])
 @login_required
 def make_order(id):
@@ -144,6 +164,9 @@ def make_order(id):
         db_sess.add(ords)
         a.quantity = a.quantity - ords.quantity
         db_sess.commit()
+        send_email_order(current_user.email, ords.id, ords.item.name,
+                         ords.item.description, ords.item.quantity * ords.item.price,
+                         img=f'static\img\{ords.item.img}')
         return redirect('/')
     return render_template('New_order.html', title='Оформление', item=a,
                            form=form)
@@ -207,30 +230,6 @@ def delete_order(id):
     return redirect('/admin_orders')
 
 
-@app.route('/profile', methods=['GET', 'POST'])
-@login_required
-def profile():
-    if current_user.moder:
-        return redirect('/')
-    form = RegisterForm()
-    if form.validate_on_submit():
-        user_o = db_sess.query(User).get(current_user.id)
-        user_o.email = form.email.data
-        user_o.hashed_password = generate_password_hash(form.password.data)
-        user_o.surname = form.surname.data
-        user_o.name = form.name.data
-        user_o.age = form.age.data
-        user_o.address = form.address.data
-        user = db_sess.query(User).filter(User.email == form.email.data).first()
-        if user:
-            return render_template('profile.html',
-                                   message="Существует уже аккаунт",
-                                   form=form)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('profile.html', title='Регистрация', form=form)
-
-
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'error'}), 404)
@@ -239,4 +238,5 @@ def not_found(error):
 if __name__ == '__main__':
     app.register_blueprint(items_resource.blueprint)
     port = int(os.environ.get("PORT", 5000))
-    serve(app, host='0.0.0.0', port=5000)
+    # serve(app, host='0.0.0.0', port=5000)
+    app.run(debug=True)

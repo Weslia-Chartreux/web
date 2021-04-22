@@ -9,11 +9,12 @@ from data.users import User, LoginForm, RegisterForm, ProfForm
 from data.items import Item, ItemsForm
 import os
 from waitress import serve
-
+from flask_ngrok import run_with_ngrok
 from data.sent_email import send_email_order
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Weslia'
+run_with_ngrok(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init("db/info.db")
@@ -238,5 +239,5 @@ def not_found(error):
 if __name__ == '__main__':
     app.register_blueprint(items_resource.blueprint)
     port = int(os.environ.get("PORT", 5000))
-    serve(app, host='0.0.0.0', port=5000)
-    # app.run(debug=True)
+    # serve(app, host='0.0.0.0', port=5000)
+    app.run()

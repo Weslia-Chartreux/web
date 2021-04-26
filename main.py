@@ -22,9 +22,10 @@ db_sess = db_session.create_session()
 
 
 @app.route('/')
-def base():
+def base():  # главная страничка
     items = db_sess.query(Item).all()
-    return render_template('main.html', title='Главная', item_list=items, css=url_for('static', filename='css/main.css'))
+    return render_template('main.html', title='Главная', item_list=items,
+                           css=url_for('static', filename='css/main.css'))
 
 
 @login_manager.user_loader
@@ -40,7 +41,7 @@ def logout():
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login():  # авторизация
     form = LoginForm()
     if form.validate_on_submit():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
@@ -54,7 +55,7 @@ def login():
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def reg():
+def reg():  # регистрация
     form = RegisterForm()
     if form.validate_on_submit():
         new_user = User()
@@ -78,7 +79,7 @@ def reg():
 
 @app.route('/item_add', methods=['GET', 'POST'])
 @login_required
-def add_item():
+def add_item():  # добавление товара
     if not current_user.moder:
         return redirect('/')
     form = ItemsForm()
@@ -98,7 +99,7 @@ def add_item():
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def delete_jobs(id):
+def delete_jobs(id):  # удаление товара
     a = db_sess.query(Item).get(id)
     if not a:
         abort(404)
@@ -112,7 +113,7 @@ def delete_jobs(id):
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_jobs(id):
+def edit_jobs(id):  # редактирование товара
     form = ItemsForm()
     a = db_sess.query(Item).get(id)
     if not a:
@@ -133,7 +134,7 @@ def edit_jobs(id):
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
-def profile():
+def profile():  # редактирование профиля
     if current_user.moder:
         return redirect('/')
     form = ProfForm()
@@ -151,7 +152,7 @@ def profile():
 
 @app.route('/buy/<int:id>', methods=['GET', 'POST'])
 @login_required
-def make_order(id):
+def make_order(id):  # создание заказа
     form = OrderForm()
     a = db_sess.query(Item).get(id)
     if form.validate_on_submit():
@@ -175,14 +176,14 @@ def make_order(id):
 
 @app.route('/orders', methods=['GET'])
 @login_required
-def view_orders():
+def view_orders():  # просмотр заказов
     a = list(current_user.orders)
     return render_template('view_orders.html', title='Заказы', item_list=a)
 
 
 @app.route('/admin_orders', methods=['GET', 'POST'])
 @login_required
-def admin_orders():
+def admin_orders():  # просмотр заказов администратором
     if not current_user.moder:
         return redirect('/')
     a = db_sess.query(Orders).all()
@@ -191,7 +192,7 @@ def admin_orders():
 
 @app.route('/edit_status/<int:id>/<int:st>', methods=['GET', 'POST'])
 @login_required
-def edit_status(id, st):
+def edit_status(id, st):  # редактирование статусов заказов
     if not current_user.moder:
         return redirect('/')
     a = db_sess.query(Orders).get(id)
@@ -218,7 +219,7 @@ def edit_status(id, st):
 
 @app.route('/delete_order/<int:id>', methods=['GET', 'POST'])
 @login_required
-def delete_order(id):
+def delete_order(id):  # удаление заказов
     if not current_user.moder:
         return redirect('/')
     a = db_sess.query(Orders).get(id)

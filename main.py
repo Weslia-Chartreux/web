@@ -1,4 +1,4 @@
-from flask import Flask, render_template, make_response, jsonify
+from flask import Flask, render_template, make_response, jsonify, url_for
 from flask_login import current_user, LoginManager, logout_user, login_required, login_user
 from werkzeug.utils import redirect
 from werkzeug.exceptions import abort
@@ -24,7 +24,7 @@ db_sess = db_session.create_session()
 @app.route('/')
 def base():
     items = db_sess.query(Item).all()
-    return render_template('main.html', title='Главная', item_list=items)
+    return render_template('main.html', title='Главная', item_list=items, css=url_for('static', filename='css/main.css'))
 
 
 @login_manager.user_loader

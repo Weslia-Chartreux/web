@@ -1,7 +1,54 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 align="center">Товары</h2>
+<style>
+  .header-h1 h1 {
+    position: relative;
+    padding-bottom: .5rem;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    text-align: center;
+    color: #00838f;
+  }
+  .header-h1 h1::before {
+    content: "";
+    position: absolute;
+    border-bottom: 2px solid #00838f;
+    bottom: .25rem;
+    left: 50%;
+    width: 30%;
+    transform: translateX(-50%);
+  }
+  .header-h1 h1::after {
+    content: "";
+    position: absolute;
+    border-bottom: 2px solid #00838f;
+    bottom: 0;
+    left: 50%;
+    width: 15%;
+    transform: translateX(-50%);
+  }
+  .header-h1-left h1 {
+    text-align: left;
+  }
+  .header-h1-left h1::before,
+  .header-h1-left h1::after {
+    left: 0;
+    transform: translateX(0);
+  }
+  .header-h1-right h1 {
+    text-align: right;
+  }
+  .header-h1-right h1::before,
+  .header-h1-right h1::after {
+    left: unset;
+    right: 0;
+    transform: translateX(0);
+  }
+</style>
+<div align="center" class="header-h1">
+  <h1>Товары</h1>
+</div>
 {% if current_user.is_authenticated and current_user.moder %}
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <a href="/item_add" class="btn btn-outline-secondary">Добавить товар</a>
@@ -19,7 +66,7 @@
                         <tr><th>Id</th><th>Название</th><th>Описание</th><th>Цена</th><th>Количество</th><th>Картинка</th><th> </th></tr>
                 </thead>
         {% for item in item_list %}
-        <tr><td>{{ item.id }}</td><td>{{ item.name }}</td><td>{{ item.description }}</td><td>{{ item.price }}</td><td>{{ item.quantity }}</td><td><img src="/static/img/{{ item.img }}" width="100"></td>
+        <tr><td>{{ item.id }}</td><td><div class="header-h1 header-h1-left"><h1>{{ item.name }}</h1></div></td><td>{{ item.description }}</td><td>{{ item.price }}</td><td>{{ item.quantity }}</td><td><img src="/static/img/{{ item.img }}" width="100"></td>
         {% if current_user.is_authenticated and current_user.moder %}
                 <td>
                  <a href="/buy/{{ item.id }}" class="btn btn-success">Оформить заказ</a>
